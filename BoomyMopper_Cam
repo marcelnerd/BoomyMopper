@@ -1,6 +1,7 @@
 // BoomyMopper.cpp : Defines the entry point for the console application.
 // Created on 10/25/17
 // Structured and written by Cameron McCoy
+// Not Minesweeper
 
 #include "stdafx.h"
 #include <iostream>
@@ -11,7 +12,7 @@
 using namespace std;
 
 //********FUNCTION PROTOTYPES*******//
-
+void generateBoard(int &);
 
 //********VARIABLE DECLARATIONS********//
 char playerBoard[8][8] = {'?'};
@@ -19,18 +20,27 @@ char fullBoard[8][8] = {'~'};
 int coordX = 0, coordY = 0; // Represents the X and Y coordinants of where the player is selecting
 int maxSub = 8;
 bool isInArray = false; // Represents whether or not the coordinants that the player entered are within the bounds of the array
-int nonBombTiles = 2; // Represents the number of tiles left that do not contain bombs.
+int nonBombTiles = 0; // Represents the number of tiles left that do not contain bombs.
 bool playerDead = false; // Represents whether or not the player has uncovered a bomb and died.
 
 
 int main() {
-	
-	//GENERATE BOARD AND SET BOMB VARIABLES FUNCTION
+
+	generateBoard(nonBombTiles);
+	srand(static_cast<int>(time(0)));
+
 
 	cout << "Welcome to BoomyMopper" << endl;
 
 	while ((nonBombTiles > 0) || (playerDead = false)) {
 		//DISPLAY BOARD FUNCTION
+		cout << endl << "Full Board" << endl;
+		for (int i = 0; i < 9; i++) {
+			for (int l = 0; l < 9; l++) {
+				cout << fullBoard[i][l];
+			}
+			cout << endl;
+		}
 
 		while (isInArray == false) {
 			cout << "What is the X coordinant of the tile that you would like to uncover?" << endl;
@@ -46,3 +56,20 @@ int main() {
 }
 
 //********FUNCTION DEFINITIONS********//
+
+void generateBoard(int &nonBombs) {
+
+	int bombSet = 0;
+	for (int i = 0; i < maxSub; i++) {
+		for (int j = 0; j < maxSub; j++) {
+			bombSet = 1 + rand() % (10 - 1 + 1);
+			if (bombSet == 4) {
+				fullBoard[i][j] = '@';
+				nonBombs = nonBombs + 1;
+			}
+			else {
+				fullBoard[i][j] = '*';
+			}
+		}
+	}
+}
