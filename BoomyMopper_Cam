@@ -13,44 +13,41 @@ using namespace std;
 
 //********FUNCTION PROTOTYPES*******//
 void generateBoard(int &);
+void displayBoard();
+bool checkIfInArray(int x, int y);
+void setTileNumber(int x, int y);
 
 //********VARIABLE DECLARATIONS********//
-char playerBoard[9][9] = {'?'};
-char fullBoard[9][9] = {'~'};
+char playerBoard[9][9];
+char fullBoard[9][9];
 int coordX = 0, coordY = 0; // Represents the X and Y coordinants of where the player is selecting
 int maxSub = 8;
 bool isInArray = false; // Represents whether or not the coordinants that the player entered are within the bounds of the array
 int nonBombTiles = 0; // Represents the number of tiles left that do not contain bombs.
 bool playerDead = false; // Represents whether or not the player has uncovered a bomb and died.
+int boxNum = 0; // Represents the number displayed on a tile, which tells the player how many bombs surround the tile
 
 
 int main() {
 
 	generateBoard(nonBombTiles);
-	
-
 
 	cout << "Welcome to BoomyMopper" << endl;
 
 	while ((nonBombTiles > 0) || (playerDead = false)) {
-		//DISPLAY BOARD FUNCTION
-		cout << endl << "Full Board" << endl;
-		for (int i = 0; i < 9; i++) {
-			for (int l = 0; l < 9; l++) {
-				cout << fullBoard[i][l];
-			}
-			cout << endl;
-		}
+		
+		displayBoard();
+		isInArray = false;
 
 		while (isInArray == false) {
 			cout << "What is the X coordinant of the tile that you would like to uncover?" << endl;
 			cin >> coordX;
 			cout << "What is the Y coordinant of the tile that you would like to uncover?" << endl;
 			cin >> coordY;
-			//COORDINANT ERROR CHECK FUNCTION
+			isInArray = checkIfInArray(coordX, coordY);
 		}
 
-		//SET AND DISPLAY TILE NUMBER FUNCTION
+		setTileNumber(coordX, coordY);
 	}
     return 0;
 }
@@ -61,8 +58,8 @@ void generateBoard(int &nonBombs) {
 
 	srand(static_cast<int>(time(NULL)));
 	int bombSet = 0;
-	for (int i = 0; i < maxSub; i++) {
-		for (int j = 0; j < maxSub; j++) {
+	for (int i = 1; i <= maxSub; i++) {
+		for (int j = 1; j <= maxSub; j++) {
 			bombSet = 1 + rand() % (10 - 1 + 1);
 			if (bombSet == 4) {
 				fullBoard[i][j] = '@';
@@ -71,6 +68,80 @@ void generateBoard(int &nonBombs) {
 			else {
 				fullBoard[i][j] = '*';
 			}
+			playerBoard[i][j] = '?';
 		}
 	}
+	fullBoard[1][0] = '1'; fullBoard[2][0] = '2'; fullBoard[3][0] = '3'; fullBoard[4][0] = '4'; fullBoard[5][0] = '5'; fullBoard[6][0] = '6'; fullBoard[7][0] = '7'; fullBoard[8][0] = '8';
+	fullBoard[0][1] = '1'; fullBoard[0][2] = '2'; fullBoard[0][3] = '3'; fullBoard[0][4] = '4'; fullBoard[0][5] = '5'; fullBoard[0][6] = '6'; fullBoard[0][7] = '7'; fullBoard[0][8] = '8';
+
+	playerBoard[1][0] = '1'; playerBoard[2][0] = '2'; playerBoard[3][0] = '3'; playerBoard[4][0] = '4'; playerBoard[5][0] = '5'; playerBoard[6][0] = '6'; playerBoard[7][0] = '7'; playerBoard[8][0] = '8';
+	playerBoard[0][1] = '1'; playerBoard[0][2] = '2'; playerBoard[0][3] = '3'; playerBoard[0][4] = '4'; playerBoard[0][5] = '5'; playerBoard[0][6] = '6'; playerBoard[0][7] = '7'; playerBoard[0][8] = '8';
+}
+
+void displayBoard() {
+
+	cout << endl << "Player Board" << endl;
+		for (int i = 0; i < 9; i++) {
+			for (int l = 0; l < 9; l++) {
+				cout << playerBoard[i][l];
+			}
+			cout << endl;
+		}
+
+		cout << endl << "Full Board" << endl;
+		for (int i = 0; i < 9; i++) {
+			for (int l = 0; l < 9; l++) {
+				cout << fullBoard[i][l];
+			}
+			cout << endl;
+		}
+}
+
+bool checkIfInArray(int x, int y) {
+	bool inArray = false;
+	if((x >= 1) && (x <= maxSub) && (y >= 1) && (y <= maxSub)) {
+		inArray = true;
+	}
+	else {
+		inArray = false;
+		cout << "Invalid Coordinants" << endl;
+	}
+	return inArray;
+}
+
+void setTileNumber(int x, int y) {
+	boxNum = 0;
+	if(fullBoard[x][y] == '@') { //Checks if the tile the player uncovered had a bomb
+		playerDead = true;
+		cout << "That tile had a bomb. You lose." << endl;
+		exit(1);
+	}
+	
+	if(fullBoard[x+1][y] == '@') {
+		boxNum++;
+	}
+	if(fullBoard[x-1][y] == '@') {
+		boxNum++;
+	}
+	if(fullBoard[x][y+1] == '@') {
+		boxNum++;
+	}
+	if(fullBoard[x][y-1] == '@') {
+		boxNum++;
+	}
+	if(fullBoard[x+1][y+1] == '@') {
+		boxNum++;
+	}
+	if(fullBoard[x-1][y+1] == '@') {
+		boxNum++;
+	}
+	if(fullBoard[x+1][y-1] == '@') {
+		boxNum++;
+	}
+	if(fullBoard[x-1][y-1] == '@') {
+		boxNum++;
+	}
+
+	
+	char thing = itoa(boxNum);
 }
